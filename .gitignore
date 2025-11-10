@@ -2,5 +2,5 @@
 .cpcache
 .calva
 .lsp
-.clj-kondo/.cache
+.clj-kondo
 data
