@@ -1,0 +1,6 @@
+.env
+.cpcache
+.calva
+.lsp
+.clj-kondo/.cache
+data
