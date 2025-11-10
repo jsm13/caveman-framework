@@ -4,13 +4,15 @@
             [hiccup2.core :as hiccup]
             [reitit.ring :as reitit-ring]
             [sandbox.hello.routes :as hello-routes]
-            [sandbox.goodbye.routes :as goodbye-routes]))
+            [sandbox.goodbye.routes :as goodbye-routes]
+            [sandbox.cave.routes :as cave-routes]))
 
 (defn routes
   [system]
   [""
    (hello-routes/routes system)
-   (goodbye-routes/routes system)])
+   (goodbye-routes/routes system)
+   (cave-routes/routes system)])
 
 (defn not-found-handler
   [_request]
