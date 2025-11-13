@@ -18,3 +18,6 @@ lint:
 
 test:
   clojure -M:dev -m kaocha.runner
+
+outdated:
+  clojure -Sdeps '{:deps {com.github.liquidz/antq {:mvn/version "RELEASE"}}}' -M -m antq.core

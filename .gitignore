@@ -3,4 +3,5 @@
 .calva
 .lsp
 .clj-kondo
+.nrepl-port
 data

@@ -25,10 +25,13 @@
              [:h1 "Not found"]]]))})
 
 (defn root-handler
-  [system request]
-  (log/info (str (:request-method request) " - " (:uri request)))
-  (let [handler (reitit-ring/ring-handler
-                 (reitit-ring/router
-                  (routes system))
-                 #'not-found-handler)]
-    (handler request)))
+  ([system request]
+   ((root-handler system) request))
+  ([system] 
+   (let [handler (reitit-ring/ring-handler
+                  (reitit-ring/router
+                   (routes system))
+                  #'not-found-handler)]
+     (fn root-handler [request]
+       (log/info (str (:request-method request) " - " (:uri request)))
+       (handler request)))))

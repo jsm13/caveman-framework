@@ -1,7 +1,9 @@
 (ns sandbox.system
   (:require
-   [ring.adapter.jetty :as jetty]
    [next.jdbc.connection :as connection]
+   [proletarian.worker :as worker]
+   [ring.adapter.jetty :as jetty]
+   [sandbox.jobs :as jobs]
    [sandbox.routes :as routes])
   (:import (com.zaxxer.hikari HikariDataSource)
            (io.github.cdimascio.dotenv Dotenv)
@@ -25,12 +27,30 @@
   [db]
   (HikariDataSource/.close db))
 
+(defn start-worker
+  [{::keys [db] :as system}]
+  (let [worker (worker/create-queue-worker
+                db
+                (partial #'jobs/process-job system)
+                {:proletarian/log #'jobs/logger
+                 :proletarian/serializer jobs/json-serializer})]
+    (worker/start! worker)
+    worker))
+
+(defn stop-worker
+  [worker]
+  (worker/stop! worker))
+
 (defn start-server
   [{::keys [env] :as system}]
-  (jetty/run-jetty 
-   (partial #'routes/root-handler system) 
-   {:port (Long/parseLong (Dotenv/.get env "PORT")) 
-    :join? false}))
+  (let [handler (if (= (Dotenv/.get env "ENVIRONMENT")
+                       "development")
+                  (partial #'routes/root-handler system)
+                  (routes/root-handler system))]
+    (jetty/run-jetty 
+     handler 
+     {:port (Long/parseLong (Dotenv/.get env "PORT")) 
+      :join? false})))
 
 (defn stop-server
   [server]
@@ -39,7 +59,8 @@
 (defn start-system
   []
   (let [system-so-far {::env (start-env)}
-        system-so-far (merge system-so-far {::db (start-db system-so-far)})]
+        system-so-far (merge system-so-far {::db (start-db system-so-far)})
+        system-so-far (merge system-so-far {::worker (start-worker system-so-far)})]
     (merge system-so-far {::server (start-server system-so-far)})))
 
 (defn stop-system
