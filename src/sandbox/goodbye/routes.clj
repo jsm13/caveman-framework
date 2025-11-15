@@ -1,5 +1,6 @@
 (ns sandbox.goodbye.routes
-  (:require [hiccup2.core :as hiccup]))
+  (:require [hiccup2.core :as hiccup]
+            [sandbox.page-html.core :as page-html]))
 
 (defn goodbye-handler
   [_system _request]
@@ -7,9 +8,10 @@
    :headers {"Content-Type" "text/html; charset=utf-8"}
    :body (str
           (hiccup/html
-           [:html
-            [:body
-             [:h1 "Goodbye, everybody"]]]))})
+           (page-html/view :body
+                           [:h1 "Goodbye, everybody"]
+                           :title
+                           "gbye")))})
 
 (defn routes
   [system]

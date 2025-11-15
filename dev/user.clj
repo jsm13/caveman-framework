@@ -34,6 +34,4 @@
   (::system/env system))
 
 (comment
-  (restart-system!)
-  (stop-system!)
-  (start-system!))
+  (restart-system!))

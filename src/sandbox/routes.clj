@@ -5,11 +5,13 @@
             [reitit.ring :as reitit-ring]
             [sandbox.hello.routes :as hello-routes]
             [sandbox.goodbye.routes :as goodbye-routes]
-            [sandbox.cave.routes :as cave-routes]))
+            [sandbox.cave.routes :as cave-routes]
+            [sandbox.static.routes :as static-routes]))
 
 (defn routes
   [system]
   [""
+   (static-routes/routes system)
    (hello-routes/routes system)
    (goodbye-routes/routes system)
    (cave-routes/routes system)])

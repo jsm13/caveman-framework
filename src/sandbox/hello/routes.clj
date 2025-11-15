@@ -1,6 +1,7 @@
 (ns sandbox.hello.routes
   (:require [next.jdbc :as jdbc]
             [sandbox.system :as-alias system]
+            [sandbox.page-html.core :as page-html]
             [hiccup2.core :as hiccup]))
 
 (defn hello-handler
@@ -12,9 +13,8 @@
      :headers {"Content-Type" "text/html; charset=utf-8"}
      :body (str
             (hiccup/html
-             [:html
-              [:body
-               [:h1 (str "Hello, " planet)]]]))}))
+             (page-html/view :body
+                             [:h1 (str "Hello, " planet)])))}))
 
 (defn routes
   [system]

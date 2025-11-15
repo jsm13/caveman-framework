@@ -1,4 +1,4 @@
-{:paths ["src"]
+{:paths ["src", "res"]
  :deps {org.clojure/clojure {:mvn/version "1.12.0"}
         ;; HTTP server
         ring/ring {:mvn/version "1.13.0"}

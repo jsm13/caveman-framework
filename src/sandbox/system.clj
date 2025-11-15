@@ -66,4 +66,5 @@
 (defn stop-system
   [system]
   (stop-server (::server system))
+  (stop-worker (::worker system))
   (stop-db (::db system)))
