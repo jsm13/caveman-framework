@@ -17,17 +17,31 @@
 
 (defn standard-html-route-middleware
   [{::system/keys [cookie-store]}]
-  [#(x/wrap-content-type-options % :nosniff)
+  [;; Prevents "media type confusion" attacks
+   #(x/wrap-content-type-options % :nosniff)
+   ;; Prevents "clickjacking" attaccks
    #(x/wrap-frame-options % :sameorigin)
+   ;; Returns "304 Not Modified if appropriate"
    wrap-not-modified
+   ;; Adds "; charset=utf-8" to response if none specified
    #(wrap-default-charset % "utf-8")
+   ;; Guesses an appropriate Content-Type if none set
    wrap-content-type
+   ;; Parses out cookies from the request
    wrap-cookies
+   ;; Parses out urlencoded form and url parameters
    wrap-params
+   ;; Parses out multipart params.
+   ;; Useful for things like file uploads
    wrap-multipart-params
+   ;; Handles "multi-value" form parameters
    wrap-nested-params
+   ;; Turns any string key in :params into keywords
    wrap-keyword-params
-   #(wrap-session % {:cookie-attrs { :http-only true }
+   ;; Handles reading and writing "session data"
+   #(wrap-session % {:cookie-attrs {:http-only true}
                      :store cookie-store})
+   ;; Handles flash data which is only around until the immediate next request
    wrap-flash
+   ;; Ensure POST requests contain anti-forgery token
    wrap-anti-forgery])
