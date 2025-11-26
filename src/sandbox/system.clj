@@ -3,6 +3,7 @@
    [next.jdbc.connection :as connection]
    [proletarian.worker :as worker]
    [ring.adapter.jetty :as jetty]
+   [ring.middleware.session.cookie :as session-cookie]
    [sandbox.jobs :as jobs]
    [sandbox.routes :as routes])
   (:import (com.zaxxer.hikari HikariDataSource)
@@ -14,6 +15,10 @@
 (defn start-env
   []
   (Dotenv/load))
+
+(defn start-cookie-store
+  []
+  (session-cookie/cookie-store))
 
 (defn start-db
   [{::keys [env]}]
@@ -59,6 +64,7 @@
 (defn start-system
   []
   (let [system-so-far {::env (start-env)}
+        system-so-far (merge system-so-far {::cookie-store (start-cookie-store)})
         system-so-far (merge system-so-far {::db (start-db system-so-far)})
         system-so-far (merge system-so-far {::worker (start-worker system-so-far)})]
     (merge system-so-far {::server (start-server system-so-far)})))

@@ -33,5 +33,11 @@
   []
   (::system/env system))
 
+(defn cookie-store
+  []
+  (::system/cookie-store system))
+
 (comment
-  (restart-system!))
+  (println "I shouldn't run")
+  (start-system!)
+  (cookie-store))
