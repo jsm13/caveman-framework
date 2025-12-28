@@ -36,4 +36,6 @@
                          ;; Run Migrations on the Test Database
                          org.mybatis/mybatis-migrations {:mvn/version "3.4.0"}}}
            :format {:deps {dev.weavejester/cljfmt {:mvn/version "0.15.4"}}}
-           :lint {:deps {clj-kondo/clj-kondo {:mvn/version "2025.10.23"}}}}}
+           :lint {:deps {clj-kondo/clj-kondo {:mvn/version "2025.10.23"}}}
+           :build {:deps {io.github.clojure/tools.build {:git/tag "v0.10.11", :git/sha "c6c670a"}}
+                   :ns-default build}}}
