@@ -2,7 +2,7 @@
   (:require [clojure.tools.build.api :as b]))
 
 (def lib 'jsm/sandbox)
-(def version (format "0.0.%s" (b/git-count-revs nil)))
+(def version "0.0.0")
 (def class-dir "target/classes")
 (def uber-file (format "target/%s-%s-standalone.jar" (name lib) version))
 
