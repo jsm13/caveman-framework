@@ -33,6 +33,21 @@ RUN clojure -T:build uber
 # Official OpenJDK Image
 FROM eclipse-temurin AS final
 
+# Add operating system packages
+# - dumb-init to ensure SIGTERM sent to java process running Clojure service
+# - Curl and jq binaries for manual running of system integration scripts
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt update && \
+    apt install -y dumb-init curl jq && \
+    apt autoremove && \
+    rm -rf /var/lib/apt/lists/*
+
+# Create Non-root group and user to run service securely
+RUN addgroup --system clojure && adduser --system clojure --ingroup clojure
+
+# Create directory to contain service archive, owned by non-root user
+RUN mkdir -p /service && chown -R clojure /service
+
 # Copy service archive file from Builder image
 WORKDIR /service
 COPY --from=builder /build/target/sandbox-0.0.0-standalone.jar /service/
@@ -43,8 +58,15 @@ RUN touch /service/.env
 # Expose port of HTTP Server
 EXPOSE 8080
 
+# JDK_JAVA_OPTIONS environment variable for setting JVM options
+# Use JVM options that optomise running in a container
+# For very low latency, use the Z Garbage collector "-XX:+UseZGC"
+ENV JDK_JAVA_OPTIONS="-XshowSettings:system -XX:+UseContainerSupport -XX:MaxRAMPercentage=90"
+
+
 # ------------------------
 # Run service
+ENTRYPOINT ["/usr/bin/dumb-init", "--"]
 CMD ["java", "-jar", "/service/sandbox-0.0.0-standalone.jar"]
 
 
