@@ -22,11 +22,14 @@
 
 (defn start-db
   [{::keys [env]}]
+  (println "!!!!!!!!!!!!!!!!")
+  (println (Dotenv/.get env "POSTGRES_HOST"))
   (connection/->pool HikariDataSource
                      {:dbtype "postgres"
                       :dbname "postgres"
                       :username (Dotenv/.get env "POSTGRES_USERNAME")
-                      :password (Dotenv/.get env "POSTGRES_PASSWORD")}))
+                      :password (Dotenv/.get env "POSTGRES_PASSWORD")
+                      :host (Dotenv/.get env "POSTGRES_HOST")}))
 
 (defn stop-db
   [db]
@@ -48,6 +51,7 @@
 
 (defn start-server
   [{::keys [env] :as system}]
+  (println "Starting server")
   (let [handler (if (= (Dotenv/.get env "ENVIRONMENT")
                        "development")
                   (partial #'routes/root-handler system)
@@ -63,10 +67,10 @@
 
 (defn start-system
   []
+  (println "starting system")
   (let [system-so-far {::env (start-env)}
         system-so-far (merge system-so-far {::cookie-store (start-cookie-store)})
-        system-so-far (merge system-so-far {::db (start-db system-so-far)})
-        system-so-far (merge system-so-far {::worker (start-worker system-so-far)})]
+        system-so-far (merge system-so-far {::db (start-db system-so-far)})]
     (merge system-so-far {::server (start-server system-so-far)})))
 
 (defn stop-system
