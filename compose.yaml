@@ -35,13 +35,13 @@ services:
       db:
         condition: service_healthy
   db:
-    image: postgres
+    image: postgres:18
     restart: always
     user: postgres
+    volumes:
+      - db_data:/var/lib/postgresql
     secrets:
       - db-password
-    volumes:
-      - db-data:/var/lib/postgresql/data
     environment:
       - POSTGRES_DB=example
       - POSTGRES_PASSWORD_FILE=/run/secrets/db-password
@@ -52,8 +52,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-volumes:
-  db-data:
 secrets:
   db-password:
     file: db/password.txt
+volumes:
+  db_data:

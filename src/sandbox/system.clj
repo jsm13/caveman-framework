@@ -70,7 +70,8 @@
   (println "starting system")
   (let [system-so-far {::env (start-env)}
         system-so-far (merge system-so-far {::cookie-store (start-cookie-store)})
-        system-so-far (merge system-so-far {::db (start-db system-so-far)})]
+        system-so-far (merge system-so-far {::db (start-db system-so-far)})
+        system-so-far (merge system-so-far {::worker (start-worker system-so-far)})]
     (merge system-so-far {::server (start-server system-so-far)})))
 
 (defn stop-system
